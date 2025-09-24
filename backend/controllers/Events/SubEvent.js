@@ -5,7 +5,7 @@ exports.createSubevent = async (req, res) => {
   try {
     console.log(req.body);
     const college=req.user?.id;
-    const { title, description, registrationPrice, winningPrices, eventDate, time, team, venue, eventType, event,studentCoordinator,studentContact,facultyCoordinator,facultyContact } = req.body;
+    const { title, description, registrationPrice, winningPrices, eventDate, time, team, venue, eventType, event,studentCoordinator1,studentContact1,studentCoordinator2,studentContact2,facultyCoordinator,facultyContact } = req.body;
 
     if (!req.files || !req.files['photo'] || !req.files['paymentScanner']) {
       return res.status(400).json({ msg: 'Both photo and payment scanner images are required.' });
@@ -37,8 +37,10 @@ exports.createSubevent = async (req, res) => {
       eventType,
       event,
       college,
-      studentCoordinator,
-      studentContact,
+      studentCoordinator1,
+      studentContact1,
+      studentCoordinator2,
+      studentContact2,
       facultyCoordinator,
       facultyContact,
     });

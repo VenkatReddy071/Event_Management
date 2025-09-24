@@ -15,12 +15,12 @@ const EventCard = ({ event,id }) => {
       <div className="p-4">
         <h3 className="text-xl font-bold text-gray-800">{event.title}</h3>
         <p className="text-sm text-gray-500 mt-1">{event.college.name}</p>
-        <h3 className="text-xl font-bold text-gray-800">Registration Free:{event.registrationPrice}</h3>
+        <h3 className=" font-bold text-gray-800">Registration Fee: <br></br>{event.registrationPrice}</h3>
         <h3 className="text-xl font-bold text-gray-800">Total Members:{event.team}</h3>
         
         <div className="flex justify-between items-center text-gray-800 text-xs mt-3">
           <span className="font-semibold">Date:{moment(event.startDate).format("MMM Do, YYYY")}</span>
-            <span className="font-semibold">Time Slot:{event.time}</span>
+            {/* <span className="font-semibold">Time Slot:{event.time}</span> */}
         </div>
       </div>
     </div>

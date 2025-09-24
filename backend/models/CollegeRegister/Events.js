@@ -14,7 +14,7 @@ const SubeventSchema = new mongoose.Schema({
         required: true
     },
     registrationPrice:{
-        type: Number,
+        type: String,
         required: true
     },
     paymentScanner:{
@@ -29,7 +29,6 @@ const SubeventSchema = new mongoose.Schema({
         },
         winningPrice:{
             type:String,
-            required:true,
         }
     }
     ],
@@ -71,11 +70,19 @@ const SubeventSchema = new mongoose.Schema({
             ref: 'College',
             required: true
     },
-    studentCoordinator:{
+    studentCoordinator1:{
         type:String,
         required:true,
     },
-    studentContact:{
+    studentContact1:{
+        type:String,
+        required:true,
+    },
+    studentCoordinator2:{
+        type:String,
+        required:true,
+    },
+    studentContact2:{
         type:String,
         required:true,
     },

@@ -94,12 +94,17 @@ const SubeventPage = () => {
                 <span className=""><strong>Faculty Contact:</strong>   {subevent.facultyContact}</span>
               </div>
             <div className=" text-gray-800  mt-3">
-                <span className=""><strong>Student Co-Ordinator:</strong> {subevent.studentCoordinator}</span>
+                <span className=""><strong>Student Co-Ordinator 1:</strong> {subevent.studentCoordinator1}</span>
                 <br></br>
-                <span className=""><strong>Student Contact:</strong>  {subevent.studentContact}</span>
+                <span className=""><strong>Student Contact 1:</strong>  {subevent.studentContact1}</span>
               </div>
             </div>
-            
+              <div className=" text-gray-800  mt-3">
+                <span className=""><strong>Student Co-Ordinator 2:</strong> {subevent.studentCoordinator2}</span>
+                <br></br>
+                <span className=""><strong>Student Contact 2:</strong>  {subevent.studentContact2}</span>
+              </div>
+            </div>
             <div>
               <h2 className="text-2xl font-bold text-gray-800 mb-4">Prizes</h2>
               <div className="space-y-2">
@@ -123,7 +128,7 @@ const SubeventPage = () => {
           <div>
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Registration</h2>
             <div className="flex items-center justify-between bg-blue-50 p-6 rounded-lg border-l-4 border-blue-500 mb-6">
-              <span className="text-xl font-bold text-blue-800">Registration Fee: ₹{subevent.registrationPrice}</span>
+              <span className="text-xl font-bold text-blue-800">Registration Fee: {subevent.registrationPrice}</span>
               <button
                 onClick={() => setShowRegistrationForm(!showRegistrationForm)}
                 className="bg-blue-600 text-white font-bold py-3 px-8 rounded-lg transition-colors duration-300 hover:bg-blue-700"
@@ -140,7 +145,7 @@ const SubeventPage = () => {
           </div>
         </div>
       </div>
-    </div>
+    
   );
 };
 

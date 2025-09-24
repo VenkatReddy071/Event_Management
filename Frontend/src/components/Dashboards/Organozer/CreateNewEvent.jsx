@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import axios from "axios"
+import axios from "axios";
+import { useEffect, useState } from 'react';
 const API_URL=`${import.meta.env.VITE_SERVER_URL}/api`
 function Registration() {
   const token=localStorage.getItem("userToken");
@@ -9,7 +9,7 @@ function Registration() {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    registrationPrice: 0,
+    registrationPrice: '',
     winningPrices: [{ position: '1st', winningPrice: '' }],
     eventDate: '',
     time: '',
@@ -17,8 +17,10 @@ function Registration() {
     venue: '',
     eventType: 'Technical',
     event: '',
-    studentCoordinator:'',
-    studentContact:'',
+    studentCoordinator1:'',
+    studentContact1:'',
+    studentCoordinator2:'',
+    studentContact2:'',
     facultyCoordinator:'',
     facultyContact:'',
   });
@@ -81,8 +83,10 @@ function Registration() {
       venue: subevent.venue,
       eventType: subevent.eventType,
       event: subevent.event._id,
-      studentCoordinator:subevent.studentCoordinator,
-      studentContact:subevent?.studentContact,
+      studentCoordinator1:subevent.studentCoordinator1,
+      studentContact1:subevent?.studentContact1,
+      studentCoordinator2:subevent.studentCoordinator2,
+      studentContact2:subevent?.studentContact2,
       facultyCoordinator:subevent.facultyCoordinator,
       facultyContact:subevent.facultyContact,
     });
@@ -93,12 +97,14 @@ function Registration() {
   const handleClearForm = () => {
     setEditingSubevent(null);
     setFormData({
-      title: '', description: '', registrationPrice: 0,
+      title: '', description: '', registrationPrice: '',
       winningPrices: [{ position: '1st', winningPrice: '' }],
       eventDate: '', time: '', team: 1, venue: '',
       eventType: 'Technical', event: '',
-    studentCoordinator:'',
-    studentContact:'',
+    studentCoordinator1:'',
+    studentContact1:'',
+    studentCoordinator2:'',
+    studentContact2:'',
     facultyCoordinator:'',
     facultyContact:'',
     });
@@ -227,8 +233,10 @@ const handleSubmit = async (e) => {
     formDataToSend.append('venue', formData.venue);
     formDataToSend.append('eventType', formData.eventType);
     formDataToSend.append('event', formData.event);
-    formDataToSend.append('studentCoordinator',formData?.studentCoordinator);
-    formDataToSend.append('studentContact',formData?.studentContact);
+    formDataToSend.append('studentCoordinator1',formData?.studentCoordinator1);
+    formDataToSend.append('studentContact1',formData?.studentContact1);
+    formDataToSend.append('studentCoordinator2',formData?.studentCoordinator2);
+    formDataToSend.append('studentContact2',formData?.studentContact2);
     formDataToSend.append('facultyCoordinator',formData?.facultyCoordinator);
     formDataToSend.append('facultyContact',formData?.facultyContact);
     // Append files if they exist.
@@ -370,7 +378,7 @@ const handleSubmit = async (e) => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="price" className="block text-sm font-medium text-gray-700">Registration Price</label>
-                  <input type="number" id="price" name="registrationPrice" value={formData.registrationPrice} onChange={handleChange} required className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm p-2.5 focus:ring-indigo-500 focus:border-indigo-500" />
+                  <input type="text" id="price" name="registrationPrice" value={formData.registrationPrice} onChange={handleChange} required className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm p-2.5 focus:ring-indigo-500 focus:border-indigo-500" />
                 </div>
                 <div>
                   <label htmlFor="team" className="block text-sm font-medium text-gray-700">Team Size (1-5)</label>
@@ -403,12 +411,22 @@ const handleSubmit = async (e) => {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="studentCoordinator" className="block text-sm font-medium text-gray-700">Student Co-ordinator</label>
-                  <input type="text" id="studentCoordinator" name="studentCoordinator" value={formData.studentCoordinator} onChange={handleChange} required className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm p-2.5 focus:ring-indigo-500 focus:border-indigo-500" />
+                  <label htmlFor="studentCoordinator1" className="block text-sm font-medium text-gray-700">Student Co-ordinator 1</label>
+                  <input type="text" id="studentCoordinator1" name="studentCoordinator1" value={formData.studentCoordinator1} onChange={handleChange} required className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm p-2.5 focus:ring-indigo-500 focus:border-indigo-500" />
                 </div>
                 <div>
-                  <label htmlFor="studentContact" className="block text-sm font-medium text-gray-700">Student Contact Number</label>
-                  <input type="text" id="studentContact" name="studentContact" value={formData.studentContact} onChange={handleChange} required className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm p-2.5 focus:ring-indigo-500 focus:border-indigo-500" />
+                  <label htmlFor="studentContact1" className="block text-sm font-medium text-gray-700">Student Contact Number 1</label>
+                  <input type="text" id="studentContact1" name="studentContact1" value={formData.studentContact1} onChange={handleChange} required className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm p-2.5 focus:ring-indigo-500 focus:border-indigo-500" />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="studentCoordinator2" className="block text-sm font-medium text-gray-700">Student Co-ordinator 2</label>
+                  <input type="text" id="studentCoordinator2" name="studentCoordinator2" value={formData.studentCoordinator2} onChange={handleChange} required className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm p-2.5 focus:ring-indigo-500 focus:border-indigo-500" />
+                </div>
+                <div>
+                  <label htmlFor="studentContact2" className="block text-sm font-medium text-gray-700">Student Contact Number 2</label>
+                  <input type="text" id="studentContact2" name="studentContact2" value={formData.studentContact2} onChange={handleChange} required className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm p-2.5 focus:ring-indigo-500 focus:border-indigo-500" />
                 </div>
               </div>
               <div>

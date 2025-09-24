@@ -110,8 +110,8 @@ const SubeventPage = () => {
               <div className="space-y-2">
                 {subevent.winningPrices.map((price, index) => (
                   <div key={index} className="flex justify-between items-center text-gray-700 bg-gray-100 p-3 rounded-md">
-                    <span className="font-semibold">{price.position} Prize:</span>
-                    <span className="text-lg font-bold text-green-600">{price.winningPrice}</span>
+                    <span className="font-semibold">{price.position}</span>
+                    {/* <span className="text-lg font-bold text-green-600">{price.winningPrice}</span> */}
                   </div>
                 ))}
               </div>

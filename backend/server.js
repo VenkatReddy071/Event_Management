@@ -14,7 +14,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(cors({
-    origin: process.env.CLIENT_URL || "https://abhinava-2k25.onrender.com",
+    origin: process.env.CLIENT_URL || "https://samanvaya-2k25.onrender.com",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
 }));

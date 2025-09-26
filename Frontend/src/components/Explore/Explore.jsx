@@ -37,7 +37,7 @@ const EventCard = ({ event }) => {
 
         <div className="flex justify-between items-center text-gray-800 text-xs mt-3">
           <span className="font-bold text-black text-sm">Start Date : {moment(event.startDate).format('MMM Do, YYYY')}</span>
-          <span className="font-bold text-black text-sm">End  Date : {moment(event.startDate).format('MMM Do, YYYY')}</span>
+          <span className="font-bold text-black text-sm">End  Date : {moment(event.endDate).format('MMM Do, YYYY')}</span>
         </div>
         <div className="flex justify-center items-center mt-6">
           <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full capitalize relative right-0 ">

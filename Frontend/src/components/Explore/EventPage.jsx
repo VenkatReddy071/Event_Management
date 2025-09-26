@@ -19,7 +19,7 @@ const EventCard = ({ event,id }) => {
         <h3 className="text-xl font-bold text-gray-800">Total Members:{event.team}</h3>
         
         <div className="flex justify-between items-center text-gray-800 text-xs mt-3">
-          <span className="font-semibold">Date: {moment(subevent.eventDate).format('MMMM Do, YYYY')}</span>
+          <span className="font-semibold">Date: {moment(event.eventDate).format('MMMM Do, YYYY')}</span>
             {/* <span className="font-semibold">Time Slot:{event.time}</span> */}
         </div>
       </div>

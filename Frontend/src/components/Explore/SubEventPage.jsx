@@ -185,7 +185,7 @@ const SubeventPage = () => {
 
   // A helper function to render the description based on its content
   const renderDescription = (description) => {
-    const DELIMITER = '$$DELIMITER$$';
+    const DELIMITER = 'DELIMITER';
     // Check if the description contains the specific delimiter
     if (description && description.includes(DELIMITER)) {
       const sections = description.split(DELIMITER).map(s => s.trim()).filter(s => s.length > 0);

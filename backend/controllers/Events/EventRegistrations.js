@@ -61,31 +61,31 @@ exports.createRegistration = async (req, res) => {
         return res.status(404).json({ msg: 'Sub-event not found.' });
     }
 
-    const emailSubject = "Congratulations! Your Registration is Confirmed";
+    // const emailSubject = "Congratulations! Your Registration is Confirmed";
 
-    const emailHtml = `
-      <p>Hello <strong>${username}</strong>,</p>
-      <p>Congratulations! Your registration for the event <strong>${fetchedSubEvent.event.title}</strong> has been confirmed.</p>
-      <p>We are excited to see you there! Here are your event details:</p>
+    // const emailHtml = `
+    //   <p>Hello <strong>${username}</strong>,</p>
+    //   <p>Congratulations! Your registration for the event <strong>${fetchedSubEvent.event.title}</strong> has been confirmed.</p>
+    //   <p>We are excited to see you there! Here are your event details:</p>
       
-      <ul>
-          <li><strong>Sub-Event:</strong> ${fetchedSubEvent.title}</li>
-          <li><strong>Date:</strong> ${new Date(fetchedSubEvent.eventDate).toDateString()}</li>
-          // <li><strong>Time:</strong> ${fetchedSubEvent.time}</li>
-          // <li><strong>Venue:</strong> ${fetchedSubEvent.venue}</li>
-          <li><strong>Registration Fee:</strong> ₹${fetchedSubEvent.registrationPrice}</li>
-      </ul>
+    //   <ul>
+    //       <li><strong>Sub-Event:</strong> ${fetchedSubEvent.title}</li>
+    //       <li><strong>Date:</strong> ${new Date(fetchedSubEvent.eventDate).toDateString()}</li>
+    //       // <li><strong>Time:</strong> ${fetchedSubEvent.time}</li>
+    //       // <li><strong>Venue:</strong> ${fetchedSubEvent.venue}</li>
+    //       <li><strong>Registration Fee:</strong> ₹${fetchedSubEvent.registrationPrice}</li>
+    //   </ul>
       
-      <p><strong>Coordinator Details:</strong></p>
-      <ul>
-          <li><strong>Student Coordinator:</strong> ${fetchedSubEvent.studentCoordinator1} - ${fetchedSubEvent.StudentContact1}</li>
-          <li><strong>Faculty Coordinator:</strong> ${fetchedSubEvent.facultyCoordinator} - ${fetchedSubEvent.facultyContact}</li>
-      </ul>
+    //   <p><strong>Coordinator Details:</strong></p>
+    //   <ul>
+    //       <li><strong>Student Coordinator:</strong> ${fetchedSubEvent.studentCoordinator1} - ${fetchedSubEvent.StudentContact1}</li>
+    //       <li><strong>Faculty Coordinator:</strong> ${fetchedSubEvent.facultyCoordinator} - ${fetchedSubEvent.facultyContact}</li>
+    //   </ul>
       
-      <p>Thanks,</p>
-      <p>Your Campus Connect Team</p>
-    `;
-    await sendEmail(email, emailSubject, '', emailHtml);
+    //   <p>Thanks,</p>
+    //   <p>Your Campus Connect Team</p>
+    // `;
+    // await sendEmail(email, emailSubject, '', emailHtml);
 
     res.status(201).json(registration);
   } catch (err) {

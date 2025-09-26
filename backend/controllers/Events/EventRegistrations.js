@@ -1,6 +1,7 @@
 const UserRegister = require('../../models/CollegeRegister/EventRegistration');
 const Event=require("../../models/CollegeRegister/EventModel");
-const {sendEmail}=require("../../utiltiles/email")
+const {sendEmail}=require("../../utiltiles/email");
+const Subevent=require("../../models/CollegeRegister/Event");
 // exports.createRegistration = async (req, res) => {
 //   try {
 //     const { username, email, CollegeName, year, branch, semister, paymentId, event, subEvent } = req.body;
@@ -70,14 +71,14 @@ exports.createRegistration = async (req, res) => {
       <ul>
           <li><strong>Sub-Event:</strong> ${fetchedSubEvent.title}</li>
           <li><strong>Date:</strong> ${new Date(fetchedSubEvent.eventDate).toDateString()}</li>
-          <li><strong>Time:</strong> ${fetchedSubEvent.time}</li>
-          <li><strong>Venue:</strong> ${fetchedSubEvent.venue}</li>
+          // <li><strong>Time:</strong> ${fetchedSubEvent.time}</li>
+          // <li><strong>Venue:</strong> ${fetchedSubEvent.venue}</li>
           <li><strong>Registration Fee:</strong> ₹${fetchedSubEvent.registrationPrice}</li>
       </ul>
       
       <p><strong>Coordinator Details:</strong></p>
       <ul>
-          <li><strong>Student Coordinator:</strong> ${fetchedSubEvent.studentCoordinator} - ${fetchedSubEvent.StudentContact}</li>
+          <li><strong>Student Coordinator:</strong> ${fetchedSubEvent.studentCoordinator1} - ${fetchedSubEvent.StudentContact1}</li>
           <li><strong>Faculty Coordinator:</strong> ${fetchedSubEvent.facultyCoordinator} - ${fetchedSubEvent.facultyContact}</li>
       </ul>
       

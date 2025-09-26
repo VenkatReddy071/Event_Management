@@ -1,7 +1,7 @@
 const UserRegister = require('../../models/CollegeRegister/EventRegistration');
 const Event=require("../../models/CollegeRegister/EventModel");
 const {sendEmail}=require("../../utiltiles/email");
-const Subevent=require("../../models/CollegeRegister/Event");
+const Subevent=require("../../models/CollegeRegister/Events");
 // exports.createRegistration = async (req, res) => {
 //   try {
 //     const { username, email, CollegeName, year, branch, semister, paymentId, event, subEvent } = req.body;

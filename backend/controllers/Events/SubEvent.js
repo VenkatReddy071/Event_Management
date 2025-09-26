@@ -83,8 +83,18 @@ exports.getSubeventById = async (req, res) => {
 
 exports.updateSubevent = async (req, res) => {
   try {
-    const { title, description, registrationPrice, winningPrices, eventDate, time, team, venue, eventType } = req.body;
-    let subeventFields = { title, description, registrationPrice, eventDate, time, team, venue, eventType };
+    const { title, description, registrationPrice, winningPrices, eventDate, time, team, venue, eventType, studentCoordinator1,
+ studentContact1,
+ studentCoordinator2,
+ studentContact2,
+ facultyCoordinator,
+ facultyContact } = req.body;
+    let subeventFields = { title, description, registrationPrice, eventDate, time, team, venue, eventType, studentCoordinator1,
+ studentContact1,
+ studentCoordinator2,
+ studentContact2,
+ facultyCoordinator,
+ facultyContact };
 
     const files = req.files;
     const subevent = await Subevent.findById(req.params.id);

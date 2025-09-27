@@ -40,6 +40,9 @@ const registerScheme=new mongoose.Schema({
         type:String,
         require:true,
     },
+    groupType:{
+        type:String,
+    },
     event:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Event',

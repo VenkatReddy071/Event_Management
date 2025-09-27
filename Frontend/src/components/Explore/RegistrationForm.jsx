@@ -1,210 +1,12 @@
-// import React, { useState } from 'react';
-// import axios from 'axios';
-// import { useParams } from 'react-router-dom';
-
-// const RegistrationForm = ({ subevent }) => {
-//   const {eventId,subeventId } = useParams();
-//   console.log(subeventId, eventId);
-//   const [formData, setFormData] = useState({
-//     username: '',
-//     email: '',
-//     collegeName: '',
-//     year: '',
-//     branch: '',
-//     semister: '',
-//     paymentId: '',
-//   });
-
-//   const [paymentScreenShot, setPaymentScreenShot] = useState(null);
-//   const [formErrors, setFormErrors] = useState({});
-//   const [formMessage, setFormMessage] = useState('');
-//   const [loading, setLoading] = useState(false);
-
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-//     setFormData({ ...formData, [name]: value });
-//   };
-
-//   const handleFileChange = (e) => {
-//     setPaymentScreenShot(e.target.files[0]);
-//   };
-
-//   const validateForm = () => {
-//     const errors = {};
-//     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-//     if (!formData.username.trim()) errors.username = 'Username is required.';
-//     if (!formData.email.trim()) {
-//       errors.email = 'Email is required.';
-//     } else if (!emailRegex.test(formData.email)) {
-//       errors.email = 'Invalid email format.';
-//     }
-//     if (!formData.collegeName.trim()) errors.collegeName = 'College Name is required.';
-//     if (!formData.year.trim()) errors.year = 'Year is required.';
-//     if (!formData.branch.trim()) errors.branch = 'Branch is required.';
-//     if (!formData.semister.trim()) errors.semister = 'Semester is required.';
-//     if (!formData.paymentId.trim()) {
-//       errors.paymentId = 'Payment Transaction ID is required.';
-//     } else if (formData.paymentId.length < 10) {
-//       errors.paymentId = 'Payment ID must be at least 10 characters.';
-//     }
-//     if (!paymentScreenShot) {
-//       errors.paymentScreenShot = 'Payment screenshot is required.';
-//     }
-
-//     setFormErrors(errors);
-//     return Object.keys(errors).length === 0;
-//   };
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     setFormMessage('');
-//     if (validateForm()) {
-//       setLoading(true);
-//       const data = new FormData();
-//       data.append('username', formData.username);
-//       data.append('email', formData.email);
-//       data.append('CollegeName', formData.collegeName);
-//       data.append('year', formData.year);
-//       data.append('branch', formData.branch);
-//       data.append('semister', formData.semister);
-//       data.append('paymentId', formData.paymentId);
-//       data.append('paymentScreenShot', paymentScreenShot);
-//       data.append('event', eventId);
-//       data.append('subEvent', subeventId);
-
-//       try {
-//         const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/eventRegister`, data, {
-//           headers: {
-//             'Content-Type': 'multipart/form-data'
-//           }
-//         });
-//         setFormMessage('Registration successful!');
-//         setFormData({
-//             username: '',
-//     email: '',
-//     collegeName: '',
-//     year: '',
-//     branch: '',
-//     semister: '',
-//     paymentId: '',
-//         })
-//       } catch (error) {
-//         setFormMessage('Registration failed. Please try again.');
-//         console.error('Registration error:', error);
-//       } finally {
-//         setLoading(false);
-//       }
-//     } else {
-//       setFormMessage('Please fix the errors in the form.');
-//     }
-//   };
-
-//   return (
-//     <div className="bg-gray-100 p-8 rounded-lg shadow-inner">
-//       <h3 className="text-xl font-bold text-gray-800 mb-4">Complete Your Registration</h3>
-      
-//       <div className="flex flex-col md:flex-row items-center justify-between p-4 mb-6 bg-yellow-50 border-l-4 border-yellow-500 rounded-md">
-//         <div className="md:w-1/2 mb-4 md:mb-0">
-//           <p className="font-semibold text-yellow-800 mb-2">Payment Instructions</p>
-//           <p className="text-sm text-gray-700">Scan the QR code below to pay the registration fee of <span className="font-bold">₹{subevent.registrationPrice}</span>. After payment, enter the Transaction ID and upload a screenshot.</p>
-//         </div>
-//         <div className="md:w-1/2 flex justify-center">
-//             <img src={subevent.paymentScanner} alt="Payment QR Code" className="w-60 h-60 object-contain rounded-md border border-gray-300" />
-//         </div>
-//       </div>
-
-//       <form onSubmit={handleSubmit} className="space-y-4">
-//         <div className="grid md:grid-cols-2 gap-4">
-//           <div>
-//             <label className="block text-gray-700">Username</label>
-//             <input type="text" name="username" value={formData.username} onChange={handleChange} className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-//             {formErrors.username && <p className="text-red-500 text-sm mt-1">{formErrors.username}</p>}
-//           </div>
-//           <div>
-//             <label className="block text-gray-700">Email</label>
-//             <input type="email" name="email" value={formData.email} onChange={handleChange} className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-//             {formErrors.email && <p className="text-red-500 text-sm mt-1">{formErrors.email}</p>}
-//           </div>
-//         </div>
-        
-//         <div className="grid md:grid-cols-2 gap-4">
-//           <div>
-//             <label className="block text-gray-700">College Name</label>
-//             <input type="text" name="collegeName" value={formData.collegeName} onChange={handleChange} className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-//             {formErrors.collegeName && <p className="text-red-500 text-sm mt-1">{formErrors.collegeName}</p>}
-//           </div>
-//           <div>
-//             <label className="block text-gray-700">Year</label>
-//             <input type="text" name="year" value={formData.year} onChange={handleChange} className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-//             {formErrors.year && <p className="text-red-500 text-sm mt-1">{formErrors.year}</p>}
-//           </div>
-//         </div>
-//         <div className="grid md:grid-cols-2 gap-4">
-//           <div>
-//             <label className="block text-gray-700">Branch</label>
-//             <input type="text" name="branch" value={formData.branch} onChange={handleChange} className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-//             {formErrors.branch && <p className="text-red-500 text-sm mt-1">{formErrors.branch}</p>}
-//           </div>
-//           <div>
-//             <label className="block text-gray-700">Semester</label>
-//             <input type="text" name="semister" value={formData.semister} onChange={handleChange} className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-//             {formErrors.semister && <p className="text-red-500 text-sm mt-1">{formErrors.semister}</p>}
-//           </div>
-//         </div>
-
-//         <div>
-//           <label className="block text-gray-700">Payment Transaction ID</label>
-//           <input type="text" name="paymentId" value={formData.paymentId} onChange={handleChange} className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-//           {formErrors.paymentId && <p className="text-red-500 text-sm mt-1">{formErrors.paymentId}</p>}
-//         </div>
-        
-//         <div>
-//           <label className="block text-gray-700">Upload Payment Screenshot</label>
-//           <input type="file" name="paymentScreenShot" onChange={handleFileChange} className="w-full text-gray-700 border rounded-md py-2" />
-//           {formErrors.paymentScreenShot && <p className="text-red-500 text-sm mt-1">{formErrors.paymentScreenShot}</p>}
-//         </div>
-        
-//         {formMessage && (
-//           <p className={`text-center py-2 rounded-md ${formErrors.paymentId ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
-//             {formMessage}
-//           </p>
-//         )}
-        
-//         <button
-//           type="submit"
-//           className="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-md transition-colors duration-300 hover:bg-blue-700"
-//           disabled={loading}
-//         >
-//           {loading ? 'Submitting...' : 'Submit Registration'}
-//         </button>
-//       </form>
-//     </div>
-//   );
-// };
-
-// export default RegistrationForm;
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
 const RegistrationForm = ({ subevent }) => {
-  const { eventId, subeventId } = useParams();
+  const {eventId,subeventId } = useParams();
   console.log(subeventId, eventId);
-
-  // Determine if the event is a known championship or contest that allows groups
-  const isTeamEvent = subevent && (
-    subevent.title.includes('Dance Championship') || 
-    subevent.title.includes('AI Prompt Writing Contest')
-  );
-  
-  // Set initial groupType based on event title, defaulting to 'Solo' if not a known team event
-  const initialGroupType = isTeamEvent ? 'Solo' : 'Solo'; // Start as Solo, let user choose if isTeamEvent is true
-
-  const [groupType, setGroupType] = useState(initialGroupType); // 'Solo' or 'Team'
-
   const [formData, setFormData] = useState({
-    username: '', // This will hold 'Username' or 'Team Name'
+    username: '',
     email: '',
     collegeName: '',
     year: '',
@@ -217,45 +19,6 @@ const RegistrationForm = ({ subevent }) => {
   const [formErrors, setFormErrors] = useState({});
   const [formMessage, setFormMessage] = useState('');
   const [loading, setLoading] = useState(false);
-
-  // --- Utility Functions ---
-
-  // Parses the registrationPrice string (e.g., "Single Person -100,Group - 400")
-  const getRegistrationPrice = () => {
-    // Default prices for safety/if parsing fails
-    let soloPrice = 100;
-    let teamPrice = 400; 
-
-    const priceString = subevent?.registrationPrice || "";
-    
-    // Simple parsing logic
-    priceString.split(',').forEach(item => {
-      const match = item.match(/(solo|single|group|team)\s*[–-]\s*(\d+)/i);
-      if (match) {
-        const type = match[1].toLowerCase();
-        const price = parseInt(match[2], 10);
-        if (type.includes('solo') || type.includes('single')) {
-          soloPrice = price;
-        } else if (type.includes('group') || type.includes('team')) {
-          teamPrice = price;
-        }
-      }
-    });
-
-    return groupType === 'Team' ? teamPrice : soloPrice;
-  };
-
-  // Determine the display label for the name field
-  const nameLabel = (groupType === 'Team' && parseInt(subevent?.team, 10) > 1) 
-    ? 'Username / Team Name' 
-    : 'Username';
-
-  // --- Event Handlers ---
-
-  const handleGroupTypeChange = (e) => {
-    setGroupType(e.target.value);
-    setFormMessage('');
-  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -270,7 +33,7 @@ const RegistrationForm = ({ subevent }) => {
     const errors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!formData.username.trim()) errors.username = `${nameLabel} is required.`;
+    if (!formData.username.trim()) errors.username = 'Username is required.';
     if (!formData.email.trim()) {
       errors.email = 'Email is required.';
     } else if (!emailRegex.test(formData.email)) {
@@ -299,7 +62,6 @@ const RegistrationForm = ({ subevent }) => {
     if (validateForm()) {
       setLoading(true);
       const data = new FormData();
-      data.append('groupType', groupType); // Send the registration type
       data.append('username', formData.username);
       data.append('email', formData.email);
       data.append('CollegeName', formData.collegeName);
@@ -317,19 +79,16 @@ const RegistrationForm = ({ subevent }) => {
             'Content-Type': 'multipart/form-data'
           }
         });
-        setFormMessage('Registration successful! 🎉');
-        // Clear form data on successful submission
+        setFormMessage('Registration successful!');
         setFormData({
             username: '',
-            email: '',
-            collegeName: '',
-            year: '',
-            branch: '',
-            semister: '',
-            paymentId: '',
-        });
-        setPaymentScreenShot(null); 
-        // Note: Visually clearing the file input requires a ref, but state is reset.
+    email: '',
+    collegeName: '',
+    year: '',
+    branch: '',
+    semister: '',
+    paymentId: '',
+        })
       } catch (error) {
         setFormMessage('Registration failed. Please try again.');
         console.error('Registration error:', error);
@@ -341,50 +100,14 @@ const RegistrationForm = ({ subevent }) => {
     }
   };
 
-  const currentPrice = getRegistrationPrice();
-
   return (
     <div className="bg-gray-100 p-8 rounded-lg shadow-inner">
       <h3 className="text-xl font-bold text-gray-800 mb-4">Complete Your Registration</h3>
-
-      {/* Conditional Solo/Team Selection */}
-      {isTeamEvent && parseInt(subevent?.team, 10) > 1 && (
-        <div className="mb-6 bg-white p-4 rounded-md border border-gray-200">
-          <label className="block text-gray-700 font-semibold mb-2">Registration Type</label>
-          <div className="flex space-x-4">
-            <label className="inline-flex items-center">
-              <input 
-                type="radio" 
-                name="groupType" 
-                value="Solo" 
-                checked={groupType === 'Solo'} 
-                onChange={handleGroupTypeChange} 
-                className="form-radio text-blue-600 h-5 w-5"
-              />
-              <span className="ml-2 text-gray-700">Solo</span>
-            </label>
-            <label className="inline-flex items-center">
-              <input 
-                type="radio" 
-                name="groupType" 
-                value="Team" 
-                checked={groupType === 'Team'} 
-                onChange={handleGroupTypeChange} 
-                className="form-radio text-blue-600 h-5 w-5"
-              />
-              <span className="ml-2 text-gray-700">Team</span>
-            </label>
-          </div>
-        </div>
-      )}
-
-      {/* Payment Instructions & QR Code */}
+      
       <div className="flex flex-col md:flex-row items-center justify-between p-4 mb-6 bg-yellow-50 border-l-4 border-yellow-500 rounded-md">
         <div className="md:w-1/2 mb-4 md:mb-0">
           <p className="font-semibold text-yellow-800 mb-2">Payment Instructions</p>
-          <p className="text-sm text-gray-700">
-            Scan the QR code below to pay the **{groupType}** registration fee of <span className="font-bold">₹{currentPrice}</span>. After payment, enter the Transaction ID and upload a screenshot.
-          </p>
+          <p className="text-sm text-gray-700">Scan the QR code below to pay the registration fee of <span className="font-bold">₹{subevent.registrationPrice}</span>. After payment, enter the Transaction ID and upload a screenshot.</p>
         </div>
         <div className="md:w-1/2 flex justify-center">
             <img src={subevent.paymentScanner} alt="Payment QR Code" className="w-60 h-60 object-contain rounded-md border border-gray-300" />
@@ -393,17 +116,9 @@ const RegistrationForm = ({ subevent }) => {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid md:grid-cols-2 gap-4">
-          {/* Dynamic Name Input */}
           <div>
-            <label className="block text-gray-700">{nameLabel}</label>
-            <input 
-                type="text" 
-                name="username" 
-                value={formData.username} 
-                onChange={handleChange} 
-                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                placeholder={groupType === 'Team' ? 'Enter Team Name' : 'Enter Your Full Name'}
-            />
+            <label className="block text-gray-700">Username</label>
+            <input type="text" name="username" value={formData.username} onChange={handleChange} className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
             {formErrors.username && <p className="text-red-500 text-sm mt-1">{formErrors.username}</p>}
           </div>
           <div>
@@ -446,12 +161,12 @@ const RegistrationForm = ({ subevent }) => {
         
         <div>
           <label className="block text-gray-700">Upload Payment Screenshot</label>
-          <input type="file" name="paymentScreenShot" onChange={handleFileChange} className="w-full text-gray-700 border rounded-md py-2" accept="image/*" />
+          <input type="file" name="paymentScreenShot" onChange={handleFileChange} className="w-full text-gray-700 border rounded-md py-2" />
           {formErrors.paymentScreenShot && <p className="text-red-500 text-sm mt-1">{formErrors.paymentScreenShot}</p>}
         </div>
         
         {formMessage && (
-          <p className={`text-center py-2 rounded-md ${formMessage.includes('failed') || formMessage.includes('fix the errors') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
+          <p className={`text-center py-2 rounded-md ${formErrors.paymentId ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
             {formMessage}
           </p>
         )}
@@ -461,7 +176,7 @@ const RegistrationForm = ({ subevent }) => {
           className="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-md transition-colors duration-300 hover:bg-blue-700"
           disabled={loading}
         >
-          {loading ? 'Submitting...' : `Submit ${groupType} Registration`}
+          {loading ? 'Submitting...' : 'Submit Registration'}
         </button>
       </form>
     </div>

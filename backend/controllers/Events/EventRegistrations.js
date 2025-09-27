@@ -35,7 +35,7 @@ const Subevent=require("../../models/CollegeRegister/Events");
 exports.createRegistration = async (req, res) => {
   try {
     // Destructure all the required fields from the request body and file
-    const { username, email, CollegeName, year, branch, semister, paymentId, event, subEvent } = req.body;
+    const { username, email, CollegeName, year, branch, semister, paymentId, event, subEvent,groupType } = req.body;
     if (!req.file) {
       return res.status(400).json({ msg: 'Payment screenshot is required.' });
     }
@@ -53,6 +53,7 @@ exports.createRegistration = async (req, res) => {
       paymentScreenShot,
       event,
       subEvent,
+      groupType
     });
     const registration = await newRegistration.save();
     const fetchedSubEvent = await Subevent.findById(subEvent).populate('event');

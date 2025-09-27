@@ -89,6 +89,7 @@ const RegistrationForm = ({ subevent }) => {
     branch: '',
     semister: '',
     paymentId: '',
+     groupType:'',
         })
       } catch (error) {
         setFormMessage('Registration failed. Please try again.');

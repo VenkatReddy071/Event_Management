@@ -13,6 +13,7 @@ const RegistrationForm = ({ subevent }) => {
     branch: '',
     semister: '',
     paymentId: '',
+    groupType:'',
   });
 
   const [paymentScreenShot, setPaymentScreenShot] = useState(null);
@@ -72,7 +73,7 @@ const RegistrationForm = ({ subevent }) => {
       data.append('paymentScreenShot', paymentScreenShot);
       data.append('event', eventId);
       data.append('subEvent', subeventId);
-
+      data.append('groupType',formData.groupType);
       try {
         const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/eventRegister`, data, {
           headers: {
@@ -99,6 +100,10 @@ const RegistrationForm = ({ subevent }) => {
       setFormMessage('Please fix the errors in the form.');
     }
   };
+  const isTeamEvent = subevent && (
+    subevent.title.includes('Dance Championship') || 
+    subevent.title.includes('AI Prompt Writing Contest')
+  );
 
   return (
     <div className="bg-gray-100 p-8 rounded-lg shadow-inner">
@@ -117,7 +122,7 @@ const RegistrationForm = ({ subevent }) => {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-gray-700">Username</label>
+            <label className="block text-gray-700">{subevent.team!==1 ? "User name / Team Name" : "User name"}</label>
             <input type="text" name="username" value={formData.username} onChange={handleChange} className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
             {formErrors.username && <p className="text-red-500 text-sm mt-1">{formErrors.username}</p>}
           </div>
@@ -158,7 +163,13 @@ const RegistrationForm = ({ subevent }) => {
           <input type="text" name="paymentId" value={formData.paymentId} onChange={handleChange} className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
           {formErrors.paymentId && <p className="text-red-500 text-sm mt-1">{formErrors.paymentId}</p>}
         </div>
-        
+        {isTeamEvent &&(
+           <div>
+          <label className="block text-gray-700">Paricipating as Team or Solo</label>
+          <input type="text" name="groupType" value={formData.groupType} onChange={handleChange} className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          {formErrors.groupType && <p className="text-red-500 text-sm mt-1">{formErrors.groupType}</p>}
+        </div>
+        ) }
         <div>
           <label className="block text-gray-700">Upload Payment Screenshot</label>
           <input type="file" name="paymentScreenShot" onChange={handleFileChange} className="w-full text-gray-700 border rounded-md py-2" />

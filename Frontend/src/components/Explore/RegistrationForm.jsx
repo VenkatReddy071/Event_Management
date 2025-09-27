@@ -165,7 +165,7 @@ const RegistrationForm = ({ subevent }) => {
         </div>
         {isTeamEvent &&(
            <div>
-          <label className="block text-gray-700">Paricipating as Team or Solo</label>
+          <label className="block text-gray-700">Participating as a Team or Solo</label>
           <input type="text" name="groupType" value={formData.groupType} onChange={handleChange} className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
           {formErrors.groupType && <p className="text-red-500 text-sm mt-1">{formErrors.groupType}</p>}
         </div>

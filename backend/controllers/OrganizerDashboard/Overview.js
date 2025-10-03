@@ -35,63 +35,63 @@ exports.getDashboardData = async (req, res) => {
 };
 
 
-exports.getDashboardData = async (req, res) => {
-    try {
-        // 1. Fetch all registrations and populate the 'subEvent' to access the registrationPrice field
-        const registrations = await Register.find({})
-            .populate({
-                path: 'subEvent',
-                select: 'registrationPrice' // Select only the field that contains the price string
-            })
-            .exec();
+// exports.getDashboardData = async (req, res) => {
+//     try {
+//         // 1. Fetch all registrations and populate the 'subEvent' to access the registrationPrice field
+//         const registrations = await Register.find({})
+//             .populate({
+//                 path: 'subEvent',
+//                 select: 'registrationPrice' // Select only the field that contains the price string
+//             })
+//             .exec();
 
-        let totalRevenue = 0;
-        let registrationCount = 0;
+//         let totalRevenue = 0;
+//         let registrationCount = 0;
 
-        // 2. Iterate through registrations and calculate revenue
-        for (const registration of registrations) {
-            const subEventDetails = registration.subEvent;
+//         // 2. Iterate through registrations and calculate revenue
+//         for (const registration of registrations) {
+//             const subEventDetails = registration.subEvent;
 
-            // Ensure subEvent details were successfully populated and the price field exists
-            if (subEventDetails && subEventDetails.registrationPrice) {
+//             // Ensure subEvent details were successfully populated and the price field exists
+//             if (subEventDetails && subEventDetails.registrationPrice) {
                 
-                // The price string is now available directly from the populated subEvent
-                const priceString = subEventDetails.registrationPrice;
+//                 // The price string is now available directly from the populated subEvent
+//                 const priceString = subEventDetails.registrationPrice;
                 
-                // Extract the numeric value from the complex price string (e.g., "Group - 400" -> 400)
-                const price = extractPriceFromString(priceString);
+//                 // Extract the numeric value from the complex price string (e.g., "Group - 400" -> 400)
+//                 const price = extractPriceFromString(priceString);
 
-                // Add the extracted price for this registration to the total revenue
-                // NOTE: This assumes that the 'subEvent' document has the correct price string 
-                // that corresponds to the 'groupType' of the current registration.
-                // If 'subEvent' has multiple price strings and the logic needs to choose one based on registration.groupType,
-                // the Subevent schema is likely structured incorrectly for easy population.
-                // Assuming the price string fetched IS the correct price for this registration:
-                totalRevenue += price;
-                registrationCount++;
+//                 // Add the extracted price for this registration to the total revenue
+//                 // NOTE: This assumes that the 'subEvent' document has the correct price string 
+//                 // that corresponds to the 'groupType' of the current registration.
+//                 // If 'subEvent' has multiple price strings and the logic needs to choose one based on registration.groupType,
+//                 // the Subevent schema is likely structured incorrectly for easy population.
+//                 // Assuming the price string fetched IS the correct price for this registration:
+//                 totalRevenue += price;
+//                 registrationCount++;
 
-            } else {
-                console.warn(`Missing subEvent or pricing details for registration with ID: ${registration._id}`);
-            }
-        }
+//             } else {
+//                 console.warn(`Missing subEvent or pricing details for registration with ID: ${registration._id}`);
+//             }
+//         }
 
-        // 3. Send the calculated data as a response
-        return res.status(200).json({
-            success: true,
-            totalRevenue: totalRevenue.toFixed(2), // Format revenue to 2 decimal places
-            totalRegistrations: registrationCount,
-            message: "Dashboard data calculated successfully based on extracted price strings."
-        });
+//         // 3. Send the calculated data as a response
+//         return res.status(200).json({
+//             success: true,
+//             totalRevenue: totalRevenue.toFixed(2), // Format revenue to 2 decimal places
+//             totalRegistrations: registrationCount,
+//             message: "Dashboard data calculated successfully based on extracted price strings."
+//         });
 
-    } catch (error) {
-        console.error("Error fetching dashboard data:", error);
-        return res.status(500).json({
-            success: false,
-            message: "Failed to fetch dashboard data.",
-            error: error.message
-        });
-    }
-};
+//     } catch (error) {
+//         console.error("Error fetching dashboard data:", error);
+//         return res.status(500).json({
+//             success: false,
+//             message: "Failed to fetch dashboard data.",
+//             error: error.message
+//         });
+//     }
+// };
 exports.getRecentEvents = async (req, res) => {
   try {
     const collegeId =req.user.id; 

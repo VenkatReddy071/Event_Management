@@ -3,54 +3,37 @@ const Event = require('../../models/CollegeRegister/EventModel');
 const userRegister = require('../../models/CollegeRegister/EventRegistration');
 const Subevent = require('../../models/CollegeRegister/Events');
 
-// exports.getDashboardData = async (req, res) => {
-//   try {
-//     const collegeId = req.user.id;
-//     const totalEvents = await Event.countDocuments({ college: collegeId });
-//     const totalParticipants = await userRegister.countDocuments({
-//       subEvent: {
-//         $in: await Subevent.find({ event: { $in: await Event.find({ college: collegeId }).select('_id') } }).select('_id')
-//       }
-//     });
-//     const registrations = await userRegister.find({
-//       subEvent: {
-//         $in: await Subevent.find({ event: { $in: await Event.find({ college: collegeId }).select('_id') } }).select('_id')
-//       }
-//     }).populate('subEvent', 'registrationPrice');
+exports.getDashboardData = async (req, res) => {
+  try {
+    const collegeId = req.user.id;
+    const totalEvents = await Event.countDocuments({ college: collegeId });
+    const totalParticipants = await userRegister.countDocuments({
+      subEvent: {
+        $in: await Subevent.find({ event: { $in: await Event.find({ college: collegeId }).select('_id') } }).select('_id')
+      }
+    });
+    const registrations = await userRegister.find({
+      subEvent: {
+        $in: await Subevent.find({ event: { $in: await Event.find({ college: collegeId }).select('_id') } }).select('_id')
+      }
+    }).populate('subEvent', 'registrationPrice');
     
-//     const totalRevenue = registrations.reduce((sum, reg) => {
-//       return sum + (reg.subEvent?.registrationPrice || 0);
-//     }, 0);
+    const totalRevenue = registrations.reduce((sum, reg) => {
+      return sum + (reg.subEvent?.registrationPrice || 0);
+    }, 0);
 
-//     res.json({
-//       totalHostedEvents: totalEvents,
-//       totalParticipants: totalParticipants,
-//       revenueSummary: totalRevenue,
-//     });
+    res.json({
+      totalHostedEvents: totalEvents,
+      totalParticipants: totalParticipants,
+      revenueSummary: totalRevenue,
+    });
 
-//   } catch (error) {
-//     console.error('Error fetching dashboard data:', error);
-//     res.status(500).json({ message: 'Server error' });
-//   }
-// };
-
-const Register = require('../models/userRegister'); // Assuming your model path
-
-// Helper function to extract the price (number) from the registrationPrice string
-const extractPriceFromString = (priceString) => {
-    if (!priceString) return 0;
-
-    // Use a regular expression to find all numbers in the string
-    // The expression /[\d,.]+/g finds sequences of digits, commas, or periods.
-    const priceMatches = priceString.match(/[\d.]+/g);
-
-    if (priceMatches && priceMatches.length > 0) {
-        // We assume the last number in the string is the price.
-        // Convert it to a float to handle potential decimals and return.
-        return parseFloat(priceMatches[priceMatches.length - 1]);
-    }
-    return 0; // Return 0 if no price could be extracted
+  } catch (error) {
+    console.error('Error fetching dashboard data:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
 };
+
 
 exports.getDashboardData = async (req, res) => {
     try {

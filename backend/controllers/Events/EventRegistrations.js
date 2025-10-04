@@ -12,6 +12,7 @@ const Subevent=require("../../models/CollegeRegister/Events");
 //     const newRegistration = new UserRegister({
 //       username,
 //       email,
+      
 //       CollegeName,
 //       year,
 //       branch,
@@ -45,6 +46,7 @@ exports.createRegistration = async (req, res) => {
     const newRegistration = new UserRegister({
       username,
       email,
+      mobile,
       CollegeName,
       year,
       branch,

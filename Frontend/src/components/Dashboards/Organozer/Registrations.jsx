@@ -2,122 +2,78 @@ import React, { useState } from "react";
 
 const eventsData = {
   technical: [
-    { name: "Paper Presentation", type: "Team-2", fee: 300 },
-    { name: "Tech Quiz", type: "Solo", fee: 100 },
-    { name: "AI Build-A-Thon", type: "Team-2", fee: 300 },
-    { name: "Coding Contest", type: "Solo", fee: 100 },
-    { name: "Working Model Expo", type: "Team-2", fee: 200 },
-    { name: "UI/UX Design Challenge", type: "Team-2", fee: 200 },
-    { name: "Tech Crossword", type: "Solo", fee: 100 },
-    { name: "AI Prompt Writing Contest", type: "Team-3", fee: 300 },
+    "Paper Presentation",
+    "Tech Quiz",
+    "AI Build-A-Thon",
+    "Coding Contest",
+    "Working Model Expo",
+    "UI/UX Design Challenge",
+    "Tech Crossword",
+    "AI Prompt Writing Contest",
   ],
   nonTechnical: [
-    { name: "Dance Championship", type: "Solo/Group", fee: "200/400" },
-    { name: "Melodious Voice", type: "Solo", fee: 100 },
-    { name: "Catwalk – Girls", type: "Solo", fee: 200 },
-    { name: "Mismatch Ramp Walk – Boys", type: "Solo", fee: 200 },
-    { name: "Artistic Impressions (Mehendi)", type: "Solo", fee: 150 },
-    { name: "Dialogue Delivery", type: "Solo", fee: 100 },
-    { name: "Theme Painting", type: "Solo", fee: 100 },
-    { name: "Photography", type: "Solo", fee: 100 },
-    { name: "Treasure Hunt", type: "Team-3", fee: 300 },
-    { name: "Tech Memes Creation", type: "Team-2", fee: 200 },
-    { name: "Stand-up Comedy", type: "Solo", fee: 100 },
-    { name: "Short Film Contest", type: "Team-2", fee: 200 },
+    "Dance Championship",
+    "Melodious Voice",
+    "Catwalk – Girls",
+    "Mismatch Ramp Walk – Boys",
+    "Artistic Impressions (Mehendi)",
+    "Dialogue Delivery",
+    "Theme Painting",
+    "Photography",
+    "Treasure Hunt",
+    "Tech Memes Creation",
+    "Stand-up Comedy",
+    "Short Film Contest",
   ],
 };
 
-const RegistrationForm = () => {
+const EventFilter = () => {
   const [category, setCategory] = useState("");
-  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [filteredEvents, setFilteredEvents] = useState([]);
 
   const handleCategoryChange = (e) => {
-    setCategory(e.target.value);
-    setSelectedEvent(null);
-  };
-
-  const handleEventChange = (e) => {
-    const selected = e.target.value;
-    const eventDetails =
-      eventsData[category].find((ev) => ev.name === selected) || null;
-    setSelectedEvent(eventDetails);
+    const selectedCategory = e.target.value;
+    setCategory(selectedCategory);
+    setFilteredEvents(eventsData[selectedCategory] || []);
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white p-6 rounded-2xl shadow">
-      <h2 className="text-2xl font-bold mb-4 text-center">Event Registration</h2>
+    <div className="max-w-lg mx-auto bg-white shadow p-6 rounded-2xl">
+      <h2 className="text-2xl font-bold text-center mb-4">
+        🎯 Event Filter Section
+      </h2>
 
-      {/* Filter Section */}
-      <div className="space-y-4 mb-6">
-        <div>
-          <label className="block font-semibold">Select Category</label>
-          <select
-            className="w-full border p-2 rounded mt-1"
-            onChange={handleCategoryChange}
-            value={category}
-          >
-            <option value="">-- Choose Category --</option>
-            <option value="technical">Technical</option>
-            <option value="nonTechnical">Non-Technical</option>
-          </select>
-        </div>
-
-        {category && (
-          <div>
-            <label className="block font-semibold">Select Event</label>
-            <select
-              className="w-full border p-2 rounded mt-1"
-              onChange={handleEventChange}
-              value={selectedEvent?.name || ""}
-            >
-              <option value="">-- Choose Event --</option>
-              {eventsData[category].map((ev) => (
-                <option key={ev.name} value={ev.name}>
-                  {ev.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-
-        {selectedEvent && (
-          <div className="p-3 bg-gray-50 rounded-md border">
-            <p>
-              <strong>Type:</strong> {selectedEvent.type}
-            </p>
-            <p>
-              <strong>Fee:</strong> ₹{selectedEvent.fee}
-            </p>
-          </div>
-        )}
+      {/* Category Dropdown */}
+      <div className="mb-4">
+        <label className="block font-semibold mb-1">Select Category</label>
+        <select
+          className="w-full border p-2 rounded"
+          value={category}
+          onChange={handleCategoryChange}
+        >
+          <option value="">-- Choose Category --</option>
+          <option value="technical">Technical Events</option>
+          <option value="nonTechnical">Non-Technical Events</option>
+        </select>
       </div>
 
-      {/* Registration Form Fields */}
-      <form className="space-y-3">
-        <input
-          type="text"
-          placeholder="Name"
-          className="w-full border p-2 rounded"
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          className="w-full border p-2 rounded"
-        />
-        <input
-          type="text"
-          placeholder="College Name"
-          className="w-full border p-2 rounded"
-        />
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
-        >
-          Register
-        </button>
-      </form>
+      {/* Filtered Event List */}
+      {filteredEvents.length > 0 && (
+        <div className="mt-4">
+          <h3 className="text-lg font-semibold mb-2">
+            Available {category === "technical" ? "Technical" : "Non-Technical"} Events:
+          </h3>
+          <ul className="list-disc pl-6 space-y-1">
+            {filteredEvents.map((event, index) => (
+              <li key={index} className="text-gray-700">
+                {event}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };
 
-export default RegistrationForm;
+export default EventFilter;

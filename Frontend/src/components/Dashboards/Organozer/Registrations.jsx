@@ -52,10 +52,10 @@ function Registration() {
   const token=localStorage.getItem('userToken');
   const fetchRegistrations=async()=>{
     try{
-      const response=await axios.get(${import.meta.env.VITE_SERVER_URL}/api/eventRegister/registrations,{
+      const response=await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/eventRegister/registrations`,{
         withCredentials: true,
             headers: {
-                Authorization: Bearer ${token},
+                Authorization: `Bearer ${token}`,
             }
       });
       setRegistrations(response.data);
@@ -153,6 +153,6 @@ function Registration() {
       <UserDetailsModal user={selectedUser} onClose={() => setSelectedUser(null)} />
     </div>
   );
-}
+} 
 
 export default Registration;

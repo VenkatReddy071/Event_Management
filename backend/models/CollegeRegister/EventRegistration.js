@@ -17,7 +17,7 @@ const registerScheme=new mongoose.Schema({
     mobile: {
         type:String,
         required:true,
-    }.    
+    },   
     CollegeName:{
         type:String,
         require:true,

@@ -30,19 +30,20 @@ const DashboardOverview = () => {
         );
         setRecentEvents(eventsResponse.data);
 
-        // Fetch all registrations
+        // Fetch all registrations for total calculation
         const registrationsResponse = await axios.get(
           `${import.meta.env.VITE_SERVER_URL}/api/organizer/registrations`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        const registrations = registrationsResponse.data;
-        setRecentRegistrations(registrations.slice(-10).reverse());
 
-        // Filter solo and team registrations
+        const registrations = registrationsResponse.data;
+        setRecentRegistrations(registrations.slice(-10).reverse()); // still show last 10 in UI
+
+        // Separate solo and team registrations
         const teams = registrations.filter(r => r.groupType && r.groupType.toLowerCase() === 'team');
         const solo = registrations.filter(r => !r.groupType || r.groupType.toLowerCase() === 'solo');
 
-        // Calculate totals
+        // Compute totals
         const totalParticipants = registrations.length;
         const revenueTeams = teams.reduce((sum, r) => sum + (r.paymentAmount || 0), 0);
         const revenueSolo = solo.reduce((sum, r) => sum + (r.paymentAmount || 0), 0);

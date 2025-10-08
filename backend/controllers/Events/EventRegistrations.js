@@ -46,7 +46,6 @@ exports.createRegistration = async (req, res) => {
     const newRegistration = new UserRegister({
       username,
       email,
-      mobile,
       CollegeName,
       year,
       branch,

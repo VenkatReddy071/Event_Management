@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { MdOutlineEventNote, MdPeopleOutline, MdOutlinePayments, MdOutlineEvent, MdPerson } from 'react-icons/md';
+import { MdOutlineEventNote, MdPeopleOutline, MdOutlinePayments, MdOutlineEvent, MdPerson, MdGroup } from 'react-icons/md';
 
 const DashboardOverview = () => {
   const token = localStorage.getItem("userToken");
-
   const [dashboardData, setDashboardData] = useState({
     totalHostedEvents: 0,
     totalParticipants: 0,
+    revenueSummary: 0,
     totalTeams: 0,
     totalSolo: 0,
-    totalRevenue: 0,
   });
-
   const [recentEvents, setRecentEvents] = useState([]);
   const [recentRegistrations, setRecentRegistrations] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,53 +19,26 @@ const DashboardOverview = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // 1️⃣ Fetch hosted events summary
+        // Fetch dashboard summary
         const summaryResponse = await axios.get(
-          `${import.meta.env.VITE_SERVER_URL}/api/organizer`,
-          { withCredentials: true, headers: { Authorization: `Bearer ${token}` } }
+          `${import.meta.env.VITE_SERVER_URL}/api/organizer/dashboard-summary`,
+          { headers: { Authorization: `Bearer ${token}` } }
         );
+        setDashboardData(summaryResponse.data);
 
-        setDashboardData(prev => ({
-          ...prev,
-          totalHostedEvents: summaryResponse.data.totalHostedEvents,
-          totalParticipants: summaryResponse.data.totalParticipants,
-        }));
-
-        // 2️⃣ Fetch recent events
+        // Fetch recent events
         const eventsResponse = await axios.get(
           `${import.meta.env.VITE_SERVER_URL}/api/organizer/events?limit=5`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setRecentEvents(eventsResponse.data);
 
-        // 3️⃣ Fetch recent registrations (or all registrations for full stats)
+        // Fetch recent registrations
         const registrationsResponse = await axios.get(
-          `${import.meta.env.VITE_SERVER_URL}/api/organizer/registrations`,
+          `${import.meta.env.VITE_SERVER_URL}/api/organizer/registrations?limit=10`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-
         setRecentRegistrations(registrationsResponse.data);
-
-        // 4️⃣ Compute teams, solo, and total revenue
-        let totalTeams = 0;
-        let totalSolo = 0;
-        let totalRevenue = 0;
-
-        registrationsResponse.data.forEach(reg => {
-          // Assuming `groupType` is 'Team' or 'Solo' in your registration data
-          if (reg.groupType?.toLowerCase() === 'team') totalTeams += 1;
-          else totalSolo += 1;
-
-          // Assuming each registration has a `registrationPrice` field
-          totalRevenue += reg.registrationPrice ? Number(reg.registrationPrice) : 0;
-        });
-
-        setDashboardData(prev => ({
-          ...prev,
-          totalTeams,
-          totalSolo,
-          totalRevenue,
-        }));
 
       } catch (err) {
         console.error("Error fetching dashboard data:", err);
@@ -80,23 +51,22 @@ const DashboardOverview = () => {
     fetchData();
   }, []);
 
-  if (loading) return <p className="text-center p-8">Loading dashboard...</p>;
-  if (error) return <p className="text-red-500 text-center p-8">{error}</p>;
+  if (loading) return <p className="text-center p-8 text-gray-600 font-semibold">Loading dashboard data...</p>;
+  if (error) return <p className="text-center p-8 text-red-500 font-semibold">{error}</p>;
 
-  // Stats for display
   const stats = [
     { label: 'Total Hosted Events', value: dashboardData.totalHostedEvents, icon: <MdOutlineEventNote size={36} className="text-blue-500" /> },
     { label: 'Total Participants', value: dashboardData.totalParticipants, icon: <MdPeopleOutline size={36} className="text-green-500" /> },
-    { label: 'Total Teams', value: dashboardData.totalTeams, icon: <MdPeopleOutline size={36} className="text-yellow-500" /> },
-    { label: 'Total Solo Participants', value: dashboardData.totalSolo, icon: <MdPerson size={36} className="text-purple-500" /> },
-    { label: 'Total Revenue', value: `$${dashboardData.totalRevenue}`, icon: <MdOutlinePayments size={36} className="text-red-500" /> },
+    { label: 'Total Teams', value: dashboardData.totalTeams, icon: <MdGroup size={36} className="text-purple-500" /> },
+    { label: 'Total Solo', value: dashboardData.totalSolo, icon: <MdPerson size={36} className="text-yellow-500" /> },
+    { label: 'Total Revenue', value: `$${dashboardData.revenueSummary}`, icon: <MdOutlinePayments size={36} className="text-red-500" /> },
   ];
 
   return (
     <div>
       <h2 className="text-3xl font-bold text-gray-800 mb-8">Dashboard Overview</h2>
-      
-      {/* Summary Stats */}
+
+      {/* Stats cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 mb-12">
         {stats.map((stat, index) => (
           <div key={index} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 transform hover:-translate-y-1">
@@ -104,20 +74,20 @@ const DashboardOverview = () => {
               <h3 className="text-lg font-semibold text-gray-700">{stat.label}</h3>
               {stat.icon}
             </div>
-            <p className="mt-4 text-3xl md:text-5xl font-extrabold text-gray-900">{stat.value}</p>
+            <p className="mt-4 text-4xl font-extrabold text-gray-900">{stat.value}</p>
           </div>
         ))}
       </div>
 
-      {/* Recent Events & Registrations */}
+      {/* Recent events and registrations */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Recent Events */}
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h3 className="flex items-center text-xl font-bold text-gray-800 mb-4">
-            <MdOutlineEvent size={24} className="mr-2 text-blue-500" />
-            Recent Events
+            <MdOutlineEvent size={24} className="mr-2 text-blue-500" /> Recent Events
           </h3>
           <ul className="divide-y divide-gray-200">
-            {recentEvents.length > 0 ? recentEvents.map(event => (
+            {recentEvents.length ? recentEvents.map(event => (
               <li key={event._id} className="py-3 flex justify-between items-center">
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-900 truncate">{event.title}</p>
@@ -128,17 +98,17 @@ const DashboardOverview = () => {
           </ul>
         </div>
 
+        {/* Recent Registrations */}
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h3 className="flex items-center text-xl font-bold text-gray-800 mb-4">
-            <MdPerson size={24} className="mr-2 text-green-500" />
-            Recent Registrations
+            <MdPerson size={24} className="mr-2 text-green-500" /> Recent Registrations
           </h3>
           <ul className="divide-y divide-gray-200">
-            {recentRegistrations.length > 0 ? recentRegistrations.map(reg => (
+            {recentRegistrations.length ? recentRegistrations.map(reg => (
               <li key={reg._id} className="py-3 flex justify-between items-center">
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-900 truncate">{reg.username}</p>
-                  <p className="text-xs text-gray-500">{reg.collegeName}</p>
+                  <p className="text-xs text-gray-500">{reg.CollegeName}</p>
                 </div>
                 <span className={`text-xs font-semibold px-2 py-1 rounded-full ${reg.paymentId ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                   {reg.paymentId ? 'Paid' : 'Pending'}

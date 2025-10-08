@@ -4,7 +4,6 @@ import { useParams } from 'react-router-dom';
 
 const RegistrationForm = ({ subevent }) => {
   const { eventId, subeventId } = useParams();
-  console.log('Event ID:', eventId, 'Subevent ID:', subeventId);
 
   const [formData, setFormData] = useState({
     username: '',
@@ -25,7 +24,7 @@ const RegistrationForm = ({ subevent }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleFileChange = (e) => {
@@ -35,13 +34,10 @@ const RegistrationForm = ({ subevent }) => {
   const validateForm = () => {
     const errors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-   
 
     if (!formData.username.trim()) errors.username = 'Username is required.';
     if (!formData.email.trim()) errors.email = 'Email is required.';
     else if (!emailRegex.test(formData.email)) errors.email = 'Invalid email format.';
-
-   
 
     if (!formData.collegeName.trim()) errors.collegeName = 'College Name is required.';
     if (!formData.year.trim()) errors.year = 'Year is required.';
@@ -58,7 +54,6 @@ const RegistrationForm = ({ subevent }) => {
       subevent &&
       (subevent.title.includes('Dance Championship') ||
         subevent.title.includes('AI Prompt Writing Contest'));
-
     if (isTeamEvent && !formData.groupType.trim()) {
       errors.groupType = 'Please specify if participating as Team or Solo.';
     }
@@ -80,10 +75,7 @@ const RegistrationForm = ({ subevent }) => {
     try {
       setLoading(true);
       const data = new FormData();
-
-      Object.entries(formData).forEach(([key, value]) => {
-        data.append(key, value);
-      });
+      Object.entries(formData).forEach(([key, value]) => data.append(key, value));
       data.append('paymentScreenShot', paymentScreenShot);
       data.append('event', eventId);
       data.append('subEvent', subeventId);
@@ -98,6 +90,7 @@ const RegistrationForm = ({ subevent }) => {
       setFormMessage('Registration successful!');
       setIsSuccess(true);
 
+      // Reset form
       setFormData({
         username: '',
         email: '',
@@ -132,7 +125,7 @@ const RegistrationForm = ({ subevent }) => {
         <div className="md:w-1/2 mb-4 md:mb-0">
           <p className="font-semibold text-yellow-800 mb-2">Payment Instructions</p>
           <p className="text-sm text-gray-700">
-            Scan the QR code below to pay the registration fee of{' '}
+            Scan the QR code to pay the registration fee of{' '}
             <span className="font-bold">₹{subevent.registrationPrice}</span>. After payment, enter
             the Transaction ID and upload a screenshot.
           </p>
@@ -151,9 +144,7 @@ const RegistrationForm = ({ subevent }) => {
         {/* Username + Email */}
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-gray-700">
-              {subevent.team !== 1 ? 'User name / Team Name' : 'User name'}
-            </label>
+            <label className="block text-gray-700">User Name / Team Name</label>
             <input
               type="text"
               name="username"
@@ -176,19 +167,8 @@ const RegistrationForm = ({ subevent }) => {
           </div>
         </div>
 
-        {/* Mobile + College */}
+        {/* College + Year/Branch */}
         <div className="grid md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-gray-700">Mobile</label>
-            <input
-              type="text"
-              name="mobile"
-              value={formData.mobile}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            {formErrors.mobile && <p className="text-red-500 text-sm">{formErrors.mobile}</p>}
-          </div>
           <div>
             <label className="block text-gray-700">College Name</label>
             <input
@@ -198,14 +178,8 @@ const RegistrationForm = ({ subevent }) => {
               onChange={handleChange}
               className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            {formErrors.collegeName && (
-              <p className="text-red-500 text-sm">{formErrors.collegeName}</p>
-            )}
+            {formErrors.collegeName && <p className="text-red-500 text-sm">{formErrors.collegeName}</p>}
           </div>
-        </div>
-
-        {/* Year + Branch */}
-        <div className="grid md:grid-cols-2 gap-4">
           <div>
             <label className="block text-gray-700">Year</label>
             <input
@@ -217,6 +191,9 @@ const RegistrationForm = ({ subevent }) => {
             />
             {formErrors.year && <p className="text-red-500 text-sm">{formErrors.year}</p>}
           </div>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4">
           <div>
             <label className="block text-gray-700">Branch</label>
             <input
@@ -228,19 +205,17 @@ const RegistrationForm = ({ subevent }) => {
             />
             {formErrors.branch && <p className="text-red-500 text-sm">{formErrors.branch}</p>}
           </div>
-        </div>
-
-        {/* Semester */}
-        <div>
-          <label className="block text-gray-700">Semester</label>
-          <input
-            type="text"
-            name="semister"
-            value={formData.semister}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          {formErrors.semister && <p className="text-red-500 text-sm">{formErrors.semister}</p>}
+          <div>
+            <label className="block text-gray-700">Semester</label>
+            <input
+              type="text"
+              name="semister"
+              value={formData.semister}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {formErrors.semister && <p className="text-red-500 text-sm">{formErrors.semister}</p>}
+          </div>
         </div>
 
         {/* Payment ID */}
@@ -256,10 +231,10 @@ const RegistrationForm = ({ subevent }) => {
           {formErrors.paymentId && <p className="text-red-500 text-sm">{formErrors.paymentId}</p>}
         </div>
 
-        {/* Group Type */}
+        {/* Team/solo input */}
         {isTeamEvent && (
           <div>
-            <label className="block text-gray-700">Participating as a Team or Solo</label>
+            <label className="block text-gray-700">Participating as Team or Solo</label>
             <input
               type="text"
               name="groupType"
@@ -296,7 +271,7 @@ const RegistrationForm = ({ subevent }) => {
           </p>
         )}
 
-        {/* Submit Button */}
+        {/* Submit */}
         <button
           type="submit"
           disabled={loading}

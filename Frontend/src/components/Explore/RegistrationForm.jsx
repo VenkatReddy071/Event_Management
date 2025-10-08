@@ -9,7 +9,6 @@ const RegistrationForm = ({ subevent }) => {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
-    mobile: '',
     collegeName: '',
     year: '',
     branch: '',
@@ -36,14 +35,13 @@ const RegistrationForm = ({ subevent }) => {
   const validateForm = () => {
     const errors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const mobileRegex = /^[6-9]\d{9}$/;
+   
 
     if (!formData.username.trim()) errors.username = 'Username is required.';
     if (!formData.email.trim()) errors.email = 'Email is required.';
     else if (!emailRegex.test(formData.email)) errors.email = 'Invalid email format.';
 
-    if (!formData.mobile.trim()) errors.mobile = 'Mobile number is required.';
-    else if (!mobileRegex.test(formData.mobile)) errors.mobile = 'Invalid mobile number.';
+   
 
     if (!formData.collegeName.trim()) errors.collegeName = 'College Name is required.';
     if (!formData.year.trim()) errors.year = 'Year is required.';
@@ -103,7 +101,6 @@ const RegistrationForm = ({ subevent }) => {
       setFormData({
         username: '',
         email: '',
-        mobile: '',
         collegeName: '',
         year: '',
         branch: '',

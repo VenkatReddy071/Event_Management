@@ -10,6 +10,8 @@ const DashboardOverview = () => {
     totalParticipants: 0,
     totalTeams: 0,
     totalSolo: 0,
+    revenueTeams: 0,
+    revenueSolo: 0,
     totalRevenue: 0,
   });
 
@@ -28,7 +30,7 @@ const DashboardOverview = () => {
         );
         setRecentEvents(eventsResponse.data);
 
-        // Fetch all registrations (without limit)
+        // Fetch all registrations
         const registrationsResponse = await axios.get(
           `${import.meta.env.VITE_SERVER_URL}/api/organizer/registrations`,
           { headers: { Authorization: `Bearer ${token}` } }
@@ -36,19 +38,23 @@ const DashboardOverview = () => {
         const registrations = registrationsResponse.data;
         setRecentRegistrations(registrations.slice(-10).reverse());
 
+        // Filter solo and team registrations
+        const teams = registrations.filter(r => r.groupType && r.groupType.toLowerCase() === 'team');
+        const solo = registrations.filter(r => !r.groupType || r.groupType.toLowerCase() === 'solo');
+
         // Calculate totals
-        const totalParticipants = registrations.reduce((acc, r) => acc + 1, 0);
-        const totalTeams = registrations.filter(r => r.groupType && r.groupType.toLowerCase() === 'team').length;
-        const totalSolo = registrations.filter(r => !r.groupType || r.groupType.toLowerCase() === 'solo').length;
-        const totalRevenue = registrations
-          .filter(r => r.paymentId)
-          .reduce((acc, r) => acc + (r.paymentAmount || 0), 0);
+        const totalParticipants = registrations.length;
+        const revenueTeams = teams.reduce((sum, r) => sum + (r.paymentAmount || 0), 0);
+        const revenueSolo = solo.reduce((sum, r) => sum + (r.paymentAmount || 0), 0);
+        const totalRevenue = revenueTeams + revenueSolo;
 
         setDashboardData({
           totalHostedEvents: eventsResponse.data.length,
           totalParticipants,
-          totalTeams,
-          totalSolo,
+          totalTeams: teams.length,
+          totalSolo: solo.length,
+          revenueTeams,
+          revenueSolo,
           totalRevenue,
         });
 
@@ -71,13 +77,15 @@ const DashboardOverview = () => {
     { label: 'Total Participants', value: dashboardData.totalParticipants, icon: <MdPeopleOutline size={36} className="text-green-500" /> },
     { label: 'Teams Registered', value: dashboardData.totalTeams, icon: <MdPerson size={36} className="text-purple-500" /> },
     { label: 'Solo Participants', value: dashboardData.totalSolo, icon: <MdPerson size={36} className="text-yellow-500" /> },
+    { label: 'Revenue (Teams)', value: `$${dashboardData.revenueTeams}`, icon: <MdOutlinePayments size={36} className="text-purple-600" /> },
+    { label: 'Revenue (Solo)', value: `$${dashboardData.revenueSolo}`, icon: <MdOutlinePayments size={36} className="text-green-600" /> },
     { label: 'Total Revenue', value: `$${dashboardData.totalRevenue}`, icon: <MdOutlinePayments size={36} className="text-red-500" /> },
   ];
 
   return (
     <div>
       <h2 className="text-3xl font-bold text-gray-800 mb-8">Dashboard Overview</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-8 mb-12">
         {stats.map((stat, idx) => (
           <div key={idx} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 transform hover:-translate-y-1">
             <div className="flex items-center justify-between">
@@ -90,6 +98,7 @@ const DashboardOverview = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Recent Events */}
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h3 className="flex items-center text-xl font-bold text-gray-800 mb-4">
             <MdOutlineEvent size={24} className="mr-2 text-blue-500" /> Recent Events
@@ -106,6 +115,7 @@ const DashboardOverview = () => {
           </ul>
         </div>
 
+        {/* Recent Registrations */}
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h3 className="flex items-center text-xl font-bold text-gray-800 mb-4">
             <MdPerson size={24} className="mr-2 text-green-500" /> Recent Registrations

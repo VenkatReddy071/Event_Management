@@ -30,7 +30,7 @@ const DashboardOverview = () => {
         setRecentEvents(eventsResponse.data);
 
         // Get total revenue and total registrations from backend
-        const revenueResponse = await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/organizer/registrations/summary`, {
+        const revenueResponse = await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/organizer/registrations`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 

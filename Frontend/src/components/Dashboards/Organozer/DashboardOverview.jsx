@@ -21,7 +21,7 @@ const DashboardOverview = () => {
       try {
         // Fetch dashboard summary
         const summaryResponse = await axios.get(
-          `${import.meta.env.VITE_SERVER_URL}/api/organizer/dashboard-summary`,
+          `${import.meta.env.VITE_SERVER_URL}/api/organizer`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setDashboardData(summaryResponse.data);

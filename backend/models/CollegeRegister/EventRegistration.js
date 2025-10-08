@@ -14,7 +14,6 @@ const registerScheme=new mongoose.Schema({
     //     ref: 'User',
     //     required: true
     // },
-   
     CollegeName:{
         type:String,
         require:true,

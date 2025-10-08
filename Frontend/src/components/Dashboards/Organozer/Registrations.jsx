@@ -1,155 +1,132 @@
 import React, { useState, useEffect } from 'react';
-import moment from 'moment';
-import axios from "axios"
-// Modal component to display user details
-const UserDetailsModal = ({ user, onClose }) => {
-  if (!user) return null;
+import axios from 'axios';
+import { MdOutlineEventNote, MdPeopleOutline, MdOutlinePayments, MdOutlineEvent, MdPerson } from 'react-icons/md';
+
+const DashboardOverview = () => {
+  const token = localStorage.getItem("userToken");
+
+  const [dashboardData, setDashboardData] = useState({
+    totalHostedEvents: 0,
+    totalParticipants: 0,
+    totalTeams: 0,
+    totalSolo: 0,
+    totalRevenue: 0,
+  });
+
+  const [recentEvents, setRecentEvents] = useState([]);
+  const [recentRegistrations, setRecentRegistrations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch events
+        const eventsResponse = await axios.get(
+          `${import.meta.env.VITE_SERVER_URL}/api/organizer/events?limit=5`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setRecentEvents(eventsResponse.data);
+
+        // Fetch all registrations (without limit)
+        const registrationsResponse = await axios.get(
+          `${import.meta.env.VITE_SERVER_URL}/api/organizer/registrations`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const registrations = registrationsResponse.data;
+        setRecentRegistrations(registrations.slice(-10).reverse());
+
+        // Calculate totals
+        const totalParticipants = registrations.reduce((acc, r) => acc + 1, 0);
+        const totalTeams = registrations.filter(r => r.groupType && r.groupType.toLowerCase() === 'team').length;
+        const totalSolo = registrations.filter(r => !r.groupType || r.groupType.toLowerCase() === 'solo').length;
+        const totalRevenue = registrations
+          .filter(r => r.paymentId)
+          .reduce((acc, r) => acc + (r.paymentAmount || 0), 0);
+
+        setDashboardData({
+          totalHostedEvents: eventsResponse.data.length,
+          totalParticipants,
+          totalTeams,
+          totalSolo,
+          totalRevenue,
+        });
+
+      } catch (err) {
+        console.error("Error fetching dashboard data:", err.response?.data || err.message);
+        setError(err.response?.data?.message || "Failed to load dashboard data. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [token]);
+
+  if (loading) return <p className="text-center p-8">Loading dashboard...</p>;
+  if (error) return <p className="text-red-500 text-center p-8">{error}</p>;
+
+  const stats = [
+    { label: 'Total Hosted Events', value: dashboardData.totalHostedEvents, icon: <MdOutlineEventNote size={36} className="text-blue-500" /> },
+    { label: 'Total Participants', value: dashboardData.totalParticipants, icon: <MdPeopleOutline size={36} className="text-green-500" /> },
+    { label: 'Teams Registered', value: dashboardData.totalTeams, icon: <MdPerson size={36} className="text-purple-500" /> },
+    { label: 'Solo Participants', value: dashboardData.totalSolo, icon: <MdPerson size={36} className="text-yellow-500" /> },
+    { label: 'Total Revenue', value: `$${dashboardData.totalRevenue}`, icon: <MdOutlinePayments size={36} className="text-red-500" /> },
+  ];
 
   return (
-    <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-xl shadow-2xl p-6 md:p-8 w-full max-w-2xl transform transition-all scale-100 opacity-100">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-2xl font-bold text-gray-800">Registration Details</h3>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-800">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+    <div>
+      <h2 className="text-3xl font-bold text-gray-800 mb-8">Dashboard Overview</h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 mb-12">
+        {stats.map((stat, idx) => (
+          <div key={idx} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 transform hover:-translate-y-1">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-gray-700">{stat.label}</h3>
+              {stat.icon}
+            </div>
+            <p className="mt-4 text-3xl md:text-5xl font-extrabold text-gray-900">{stat.value}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h3 className="flex items-center text-xl font-bold text-gray-800 mb-4">
+            <MdOutlineEvent size={24} className="mr-2 text-blue-500" /> Recent Events
+          </h3>
+          <ul className="divide-y divide-gray-200">
+            {recentEvents.length ? recentEvents.map(e => (
+              <li key={e._id} className="py-3 flex justify-between items-center">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-900 truncate">{e.title}</p>
+                  <p className="text-xs text-gray-500">{new Date(e.startDate).toLocaleDateString()}</p>
+                </div>
+              </li>
+            )) : <p className="text-gray-500 text-sm">No recent events found.</p>}
+          </ul>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700">
-          <div>
-            <p><strong>Username:</strong> {user.username}</p>
-            <p><strong>Email:</strong> {user.email}</p>
-            <p><strong>College:</strong> {user.CollegeName}</p>
-            <p><strong>Year:</strong> {user.year}</p>
-            <p><strong>Branch:</strong> {user.branch}</p>
-            <p><strong>Semester:</strong> {user.semister}</p>
-            <p><strong>Payment ID:</strong> {user.paymentId}</p>
-            <p><strong>Event:</strong> {user.event.title}</p>
-            <p><strong>Subevent:</strong> {user.subEvent.title}</p>
-          </div>
-          <div>
-            <h4 className="text-lg font-semibold mb-2">Payment Screenshot</h4>
-            <img 
-              src={user.paymentScreenShot} 
-              alt="Payment Screenshot" 
-              className="w-full h-auto rounded-lg shadow-md" 
-              onError={(e) => { e.target.onerror = null; e.target.src="https://placehold.co/400x300/e0e0e0/555555?text=Screenshot+Not+Available" }}
-            />
-          </div>
+
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h3 className="flex items-center text-xl font-bold text-gray-800 mb-4">
+            <MdPerson size={24} className="mr-2 text-green-500" /> Recent Registrations
+          </h3>
+          <ul className="divide-y divide-gray-200">
+            {recentRegistrations.length ? recentRegistrations.map(r => (
+              <li key={r._id} className="py-3 flex justify-between items-center">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-900 truncate">{r.username}</p>
+                  <p className="text-xs text-gray-500">{r.CollegeName}</p>
+                </div>
+                <span className={`text-xs font-semibold px-2 py-1 rounded-full ${r.paymentId ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                  {r.paymentId ? 'Paid' : 'Pending'}
+                </span>
+              </li>
+            )) : <p className="text-gray-500 text-sm">No recent registrations found.</p>}
+          </ul>
         </div>
       </div>
     </div>
   );
 };
 
-
-
-function Registration() {
-  const [registrations, setRegistrations] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const token=localStorage.getItem('userToken');
-  const fetchRegistrations=async()=>{
-    try{
-      const response=await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/eventRegister/registrations`,{
-        withCredentials: true,
-            headers: {
-                Authorization: `Bearer ${token}`,
-            }
-      });
-      setRegistrations(response.data);
-    }
-    catch(error){
-      console.log(error);
-    }
-  }
-  useEffect(() => {
-    fetchRegistrations();
-  }, []);
-
-  const handleDownload = () => {
-    const header = ['Username', 'Email', 'College Name', 'Year', 'Branch', 'Semester', 'Payment ID', 'Event', 'Sub-event'];
-    const rows = registrations.map(reg => [
-      reg.username,
-      reg.email,
-      reg.CollegeName,
-      reg.year,
-      reg.branch,
-      reg.semister,
-      reg.paymentId,
-      reg.event.name,
-      reg.subEvent.title,
-    ].join(','));
-
-    const csvContent = [header.join(','), ...rows].join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', 'registrations.csv');
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  return (
-    <div className="min-h-screen bg-gray-100 p-8 font-sans">
-      <div className="container mx-auto">
-        <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-12">
-          Event Registrations
-        </h1>
-
-        <div className="p-6 bg-white rounded-xl shadow-lg h-fit">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-800">Registered Users</h2>
-            <button
-              onClick={handleDownload}
-              className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full text-sm transition-colors"
-            >
-              Download All Transactions
-            </button>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white rounded-lg shadow-md">
-              <thead>
-                <tr className="w-full bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                  <th className="py-3 px-6 text-left">User</th>
-                  <th className="py-3 px-6 text-left">Event</th>
-                  <th className="py-3 px-6 text-left">Sub-event</th>
-                  <th className="py-3 px-6 text-left">Payment ID</th>
-                  <th className="py-3 px-6 text-center">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="text-gray-600 text-sm font-light">
-                {registrations.map(reg => (
-                  <tr key={reg._id} className="border-b border-gray-200 hover:bg-gray-100">
-                    <td className="py-3 px-6 text-left whitespace-nowrap">
-                      <div className="font-semibold text-gray-900">{reg.username}</div>
-                      <div className="text-xs text-gray-500">{reg.email}</div>
-                    </td>
-                    <td className="py-3 px-6 text-left">{reg.event.title}</td>
-                    <td className="py-3 px-6 text-left">{reg.subEvent.title}</td>
-                    <td className="py-3 px-6 text-left">{reg.paymentId}</td>
-                    <td className="py-3 px-6 text-center">
-                      <button 
-                        onClick={() => setSelectedUser(reg)}
-                        className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-1 px-3 rounded-full text-xs transition-colors"
-                      >
-                        View Details
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-      <UserDetailsModal user={selectedUser} onClose={() => setSelectedUser(null)} />
-    </div>
-  );
-}
-
-export default Registration;
+export default DashboardOverview;

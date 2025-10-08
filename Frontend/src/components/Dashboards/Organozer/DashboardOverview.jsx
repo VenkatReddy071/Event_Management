@@ -35,22 +35,11 @@ const DashboardOverview = () => {
         });
         setRecentEvents(eventsResponse.data);
 
-        // Fetch up to 500 registrations for totals
-        const registrationsResponse = await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/organizer/registrations?limit=500`, {
+        // Fetch totals from backend (all registrations)
+        const totalsResponse = await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/organizer/registrations/summary`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const registrations = registrationsResponse.data;
-
-        const totalSolo = registrations.filter(r => !r.groupType || r.groupType.toLowerCase() === 'solo').length;
-        const totalTeams = registrations.filter(r => r.groupType && r.groupType.toLowerCase() === 'team').length;
-        const totalRevenue = registrations.reduce((sum, r) => sum + (r.paymentAmount || 0), 0);
-
-        setTotals({
-          totalRegistrations: registrations.length,
-          totalSolo,
-          totalTeams,
-          totalRevenue
-        });
+        setTotals(totalsResponse.data);
 
       } catch (err) {
         console.error("Error fetching dashboard data:", err);

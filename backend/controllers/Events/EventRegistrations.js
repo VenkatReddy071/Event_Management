@@ -12,7 +12,6 @@ const Subevent=require("../../models/CollegeRegister/Events");
 //     const newRegistration = new UserRegister({
 //       username,
 //       email,
-      
 //       CollegeName,
 //       year,
 //       branch,

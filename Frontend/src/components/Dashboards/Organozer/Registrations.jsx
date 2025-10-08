@@ -128,7 +128,6 @@ function Registration() {
                     <td className="py-3 px-6 text-left whitespace-nowrap">
                       <div className="font-semibold text-gray-900">{reg.username}</div>
                       <div className="text-xs text-gray-500">{reg.email}</div>
-                    
                     </td>
                     <td className="py-3 px-6 text-left">{reg.event.title}</td>
                     <td className="py-3 px-6 text-left">{reg.subEvent.title}</td>
@@ -151,6 +150,6 @@ function Registration() {
       <UserDetailsModal user={selectedUser} onClose={() => setSelectedUser(null)} />
     </div>
   );
-} 
+}
 
 export default Registration;

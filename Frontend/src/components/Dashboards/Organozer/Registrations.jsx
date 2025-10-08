@@ -20,7 +20,6 @@ const UserDetailsModal = ({ user, onClose }) => {
           <div>
             <p><strong>Username:</strong> {user.username}</p>
             <p><strong>Email:</strong> {user.email}</p>
-            <p><strong>Mobile Number:</strong>{user.mobile}</p>
             <p><strong>College:</strong> {user.CollegeName}</p>
             <p><strong>Year:</strong> {user.year}</p>
             <p><strong>Branch:</strong> {user.branch}</p>
@@ -69,11 +68,10 @@ function Registration() {
   }, []);
 
   const handleDownload = () => {
-    const header = ['Username', 'Email','Mobile Number', 'College Name', 'Year', 'Branch', 'Semester', 'Payment ID', 'Event', 'Sub-event'];
+    const header = ['Username', 'Email', 'College Name', 'Year', 'Branch', 'Semester', 'Payment ID', 'Event', 'Sub-event'];
     const rows = registrations.map(reg => [
       reg.username,
       reg.email,
-      reg.mobile,
       reg.CollegeName,
       reg.year,
       reg.branch,
@@ -130,7 +128,7 @@ function Registration() {
                     <td className="py-3 px-6 text-left whitespace-nowrap">
                       <div className="font-semibold text-gray-900">{reg.username}</div>
                       <div className="text-xs text-gray-500">{reg.email}</div>
-                      <div className="text-xs text-gray-500">{reg.mobile}</div>
+                    
                     </td>
                     <td className="py-3 px-6 text-left">{reg.event.title}</td>
                     <td className="py-3 px-6 text-left">{reg.subEvent.title}</td>

@@ -8,13 +8,14 @@ const DashboardOverview = () => {
   const [dashboardData, setDashboardData] = useState({
     totalHostedEvents: 0,
     totalParticipants: 0,
-    revenueSummary: 0,
   });
   const [recentEvents, setRecentEvents] = useState([]);
   const [totals, setTotals] = useState({
     totalRegistrations: 0,
     totalSolo: 0,
     totalTeams: 0,
+    soloRevenue: 0,
+    teamRevenue: 0,
     totalRevenue: 0
   });
   const [loading, setLoading] = useState(true);
@@ -23,33 +24,39 @@ const DashboardOverview = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch dashboard summary
+        // Dashboard summary
         const summaryResponse = await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/organizer`, {
           withCredentials: true,
           headers: { Authorization: `Bearer ${token}` },
         });
         setDashboardData(summaryResponse.data);
 
-        // Fetch recent events
+        // Recent events
         const eventsResponse = await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/organizer/events?limit=5`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setRecentEvents(eventsResponse.data);
 
-        // Fetch all registrations to calculate totals
+        // All registrations
         const registrationsResponse = await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/organizer/registrations`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const registrations = registrationsResponse.data;
 
-        const totalSolo = registrations.filter(r => !r.groupType || r.groupType.toLowerCase() === 'solo').length;
-        const totalTeams = registrations.filter(r => r.groupType && r.groupType.toLowerCase() === 'team').length;
-        const totalRevenue = registrations.reduce((sum, r) => sum + (r.paymentAmount || 0), 0);
+        // Calculate totals
+        const soloRegs = registrations.filter(r => !r.groupType || r.groupType.toLowerCase() === 'solo');
+        const teamRegs = registrations.filter(r => r.groupType && r.groupType.toLowerCase() === 'team');
+
+        const soloRevenue = soloRegs.reduce((sum, r) => sum + (r.paymentAmount || 0), 0);
+        const teamRevenue = teamRegs.reduce((sum, r) => sum + (r.paymentAmount || 0), 0);
+        const totalRevenue = soloRevenue + teamRevenue;
 
         setTotals({
           totalRegistrations: registrations.length,
-          totalSolo,
-          totalTeams,
+          totalSolo: soloRegs.length,
+          totalTeams: teamRegs.length,
+          soloRevenue,
+          teamRevenue,
           totalRevenue
         });
 
@@ -83,21 +90,24 @@ const DashboardOverview = () => {
   const stats = [
     { label: 'Total Hosted Events', value: dashboardData.totalHostedEvents, icon: <MdOutlineEventNote size={36} className="text-blue-500" /> },
     { label: 'Total Participants', value: dashboardData.totalParticipants, icon: <MdPeopleOutline size={36} className="text-green-500" /> },
-    { label: 'Total Registrations', value: totals.totalRegistrations, icon: <MdOutlineEvent size={36} className="text-yellow-500" /> },
-    { label: 'Total Revenue', value: `$${totals.totalRevenue}`, icon: <MdOutlinePayments size={36} className="text-purple-500" /> },
+    { label: 'Total Solo Registrations', value: totals.totalSolo, icon: <MdPerson size={36} className="text-yellow-500" /> },
+    { label: 'Total Team Registrations', value: totals.totalTeams, icon: <MdPerson size={36} className="text-purple-500" /> },
+    { label: 'Solo Revenue', value: `$${totals.soloRevenue}`, icon: <MdOutlinePayments size={36} className="text-green-500" /> },
+    { label: 'Team Revenue', value: `$${totals.teamRevenue}`, icon: <MdOutlinePayments size={36} className="text-blue-500" /> },
+    { label: 'Total Revenue', value: `$${totals.totalRevenue}`, icon: <MdOutlinePayments size={36} className="text-red-500" /> },
   ];
 
   return (
     <div>
       <h2 className="text-3xl font-bold text-gray-800 mb-8">Dashboard Overview</h2>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8 mb-12">
         {stats.map((stat, index) => (
           <div key={index} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 transform hover:-translate-y-1">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-gray-700">{stat.label}</h3>
               {stat.icon}
             </div>
-            <p className="mt-4 text-5xl font-extrabold text-gray-900">{stat.value}</p>
+            <p className="mt-4 text-3xl md:text-5xl font-extrabold text-gray-900">{stat.value}</p>
           </div>
         ))}
       </div>

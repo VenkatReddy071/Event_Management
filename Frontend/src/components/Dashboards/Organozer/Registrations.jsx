@@ -27,6 +27,7 @@ const UserDetailsModal = ({ user, onClose }) => {
             <p><strong>Payment ID:</strong> {user.paymentId}</p>
             <p><strong>Event:</strong> {user.event.title}</p>
             <p><strong>Subevent:</strong> {user.subEvent.title}</p>
+            <p><strong>isGroup:</strong>{user.groupType!==''?user.groupType:""}</p>
           </div>
           <div>
             <h4 className="text-lg font-semibold mb-2">Payment Screenshot</h4>
@@ -120,6 +121,7 @@ function Registration() {
                   <th className="py-3 px-6 text-left">Sub-event</th>
                   <th className="py-3 px-6 text-left">Payment ID</th>
                   <th className="py-3 px-6 text-center">Actions</th>
+      
                 </tr>
               </thead>
               <tbody className="text-gray-600 text-sm font-light">

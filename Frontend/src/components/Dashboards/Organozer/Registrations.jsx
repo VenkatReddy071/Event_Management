@@ -69,7 +69,7 @@ function Registration() {
   }, []);
 
   const handleDownload = () => {
-    const header = ['Username', 'Email', 'College Name', 'Year', 'Branch', 'Semester', 'Payment ID', 'Event', 'Sub-event'];
+    const header = ['Username', 'Email', 'College Name', 'Year', 'Branch', 'Semester', 'Payment ID', 'Event', 'Sub-event','Group'];
     const rows = registrations.map(reg => [
       reg.username,
       reg.email,
@@ -80,6 +80,7 @@ function Registration() {
       reg.paymentId,
       reg.event.name,
       reg.subEvent.title,
+      reg.groupType,
     ].join(','));
 
     const csvContent = [header.join(','), ...rows].join('\n');
